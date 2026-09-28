@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>To-Do List</title>
+<style>
+  body { font-family: sans-serif; background: #f2f2f2; padding: 20px; }
+  .box { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; }
+  input { width: 70%; padding: 10px; }
+  button { padding: 10px; }
+  li { display: flex; justify-content: space-between; padding: 8px 0; }
+  li.done span { text-decoration: line-through; color: gray; }
+  ul { list-style: none; padding: 0; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>My To-Do List</h2>
+  <input id="task" placeholder="Add a task...">
+  <button onclick="addTask()">Add</button>
+  <ul id="list"></ul>
+</div>
+
+<script>
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function save() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  render();
+}
+
+function addTask() {
+  const input = document.getElementById("task");
+  if (input.value.trim() === "") return;
+  tasks.push({ text: input.value, done: false });
+  input.value = "";
+  save();
+}
+
+function toggle(i) { tasks[i].done = !tasks[i].done; save(); }
+function remove(i) { tasks.splice(i, 1); save(); }
+
+function render() {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  tasks.forEach((t, i) => {
+    const li = document.createElement("li");
+    if (t.done) li.className = "done";
+    li.innerHTML = `<span onclick="toggle(${i})">${t.text}</span>
+                    <button onclick="remove(${i})">✕</button>`;
+    list.appendChild(li);
+  });
+}
+render();
+</script>
+</body>
+</html>
